@@ -1,0 +1,4 @@
+*.pyc
+*~
+__pycache__
+tcsapp workspace.code-workspace
