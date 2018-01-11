@@ -1,0 +1,220 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <style>
+                body {
+                    background-color: #222222 !important;
+                    color: #9c9a9a !important; 
+                }
+                </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TCS Checker - All Stores Info</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/select/1.2.1/js/dataTables.select.min.js"></script>
+<script src="https://cdn.datatables.net/plug-ins/1.10.13/api/fnStandingRedraw.js"></script>
+
+<script>
+        var group1;
+        var _5pm;
+        var _530pm;
+        var _6pm;
+        var _7pm;
+          
+          
+          
+        $.getJSON("{% static '5pm.json' %}", function(data) {
+         _5pm = data;
+        });
+        $.getJSON("{% static '5pm.json' %}", function(data) {
+        _530pm = data;
+        });
+        $.getJSON("{% static '5pm.json' %}", function(data) {
+        _6pm = data;
+        });
+        $.getJSON("{% static '5pm.json' %}", function(data) {
+        _7pm = data;
+        });
+
+
+    $(document).ready(function() {
+      $('#allstores').DataTable( {
+         
+          "ajax":{
+            "processing": true,
+            "url": "{% url 'ajax_url' %}",
+            "dataSrc":""
+          },
+
+          "pageLength": 25,
+          "columns":[   { data: "pk" },
+                        { data: "fields.name" },
+                        { data: "fields.telephone",
+                          render: function(data, type, row) {
+                            if (type === 'display' && data == 'No Data')
+                            {
+                                return data;
+                            }
+
+                            else if (type === 'display' && data) 
+                                {
+                                return '<a href="http://admin:Connexion1@sip-t23g-{{out}}/cgi-bin/ConfigManApp.com?number='+data+'&outgoing_uri={{out}}@192.168.20.156">'+data+'</a>'
+                                }
+                            return data;
+                            },
+                        },
+                        { data: "fields.area_manager" },
+                        { data: "fields.area_manager_tel",
+                            render: function(data, type, row) {
+                                if (type === 'display' && data == 'No Data')
+                                {
+                                    return data;
+                                }
+
+                                else if (type === 'display' && data) 
+                                {
+                                    return '<a href="http://admin:Connexion1@sip-t23g-{{out}}/cgi-bin/ConfigManApp.com?number='+data+'&outgoing_uri={{out}}@192.168.20.156">'+data+'</a>'
+                                }
+                            return data;
+                                },
+                        },
+                        { data: "fields.store_manager" },
+                        { data: "fields.store_manager_tel", 
+                            render: function(data, type, row) {
+                                if (type === 'display' && data == 'No Data')
+                                {
+                                    return data;
+                                }
+
+                                else if (type === 'display' && data) 
+                                {
+                                    return '<a href="http://admin:Connexion1@sip-t23g-{{out}}/cgi-bin/ConfigManApp.com?number='+data+'&outgoing_uri={{out}}@192.168.20.156">'+data+'</a>'
+                                }
+                            return data;
+                            },
+                        },
+                        { data: "fields.trainee_manager" },
+                        { data: "fields.trainee_manager_tel",
+                            render: function(data, type, row) {
+                                if (type === 'display' && data == 'No Data')
+                                {
+                                    return data;
+                                }
+
+                                else if (type === 'display' && data) 
+                                {
+                                    return '<a href="http://admin:Connexion1@sip-t23g-{{out}}/cgi-bin/ConfigManApp.com?number='+data+'&outgoing_uri={{out}}@192.168.20.156">'+data+'</a>'
+                                }
+                            return data;
+                            },           
+                        },
+                    ]
+      });
+    });
+    </script>
+
+    
+
+</head>
+<body>
+<nav id="myNavbar" class="navbar navbar-default navbar-inverse navbar-fixed-top" role="navigation">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbarCollapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">TCS Checker</a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/phone/">Dashboard</a></li>
+                <li><a href="/">Integrity Checker</a></li>
+                <li class="active"><a href="">All Store Info</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="jumbotron text-center" style="background-color: #222222">
+        <h2>All Stores Infomation</h2>
+      </div>
+      
+      <div class="container">
+        <div class="row">
+            <div class="col-sm-2 text-center" >
+                <div class="panel panel-default" width="30%">
+                <!-- Default panel contents -->
+                <div class="panel-heading">FILTERS</div>
+                <!-- FAILED CHECKBOX -->
+                <div class="checkbox text-center">
+                <label><input id="checkbox" type="checkbox" value="">Show Failed</label>
+                </div>
+                <!-- 5PM CHECKBOX -->
+                <div class="checkbox text-center">
+                <label><input id="5PMBOX" type="checkbox" value="">5:00pm Stores</label>
+                </div>
+                <!-- 5:30PM CHECKBOX -->
+                <div class="checkbox text-center">
+                <label><input id="530PMBOX" type="checkbox" value="">5:30pm Stores</label>
+                </div>
+                <!-- 6PM CHECKBOX -->
+                <div class="checkbox text-center">
+                <label><input id="6PMBOX" type="checkbox" value="">6:00pm Stores</label>
+                </div>
+                <!-- 7PM CHECKBOX -->
+                <div class="checkbox text-center">
+                <label><input id="7PMBOX" type="checkbox" value="">7:00pm Stores</label>
+                </div>
+                </div>
+            </div>
+    
+            <div class="col-sm-12" >
+                <table class="table table-bordered table-hover" width="100%" cellspacing="0" id="allstores">
+            <thead>
+                <tr>
+                        <th></th>
+                        <th>Store</th>
+                        <th>Telephone</th>
+                        <th>Area Manager</th>
+                        <th></th>
+                        <th>Store Manager</th>
+                        <th></th>
+                        <th>Trainee Manager</th>
+                        <th></th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                        <th></th>
+                        <th>Store</th>
+                        <th>Telephone</th>
+                        <th>Area Manager</th>
+                        <th></th>
+                        <th>Store Manager</th>
+                        <th></th>
+                        <th>Trainee Manager</th>
+                        <th></th>
+                </tr>
+            </tfoot>
+          </table>
+            </div>
+        </div>
+    </div>
+    
+    
+    
+    </body>
+    </html>
+    

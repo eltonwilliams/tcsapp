@@ -16,39 +16,11 @@
 
 <script type="text/javascript">
     /*-----------DATA REFRESH TIMER------------*/
-    $(document).ready(function(){
-        reloadStoreData();
+
 
         /*------------AJAX REQUEST TO RETRIEVE DATA FROM SERVER-------------*/
         function reloadStoreData() {
     document.getElementById("progress").setAttribute('class', 'progress-bar progress-bar-success progress-bar-striped active')
-              $.getJSON('/ajax', function(data) {
-
-              var zline = ""
-              for (i=0;i<data.nozrep.length;i++){
-              zline += "<tr><td>" + data.nozrep[i].store + "</td><td>" + data.nozrep[i].name + "</td><td>" + data.nozrep[i].slave + "</td></tr>"
-            }
-            document.getElementById("nozrep").innerHTML = zline;
-
-            var iline = ""
-            for (i=0;i<data.integrity.length;i++){
-            iline += "<tr><td>" + data.integrity[i].store + "</td><td>" + data.integrity[i].name + "</td><td>" + data.integrity[i].slave + "</td><td>" + data.integrity[i].message +  "</td></tr>"
-            }
-            document.getElementById("integrity").innerHTML = iline;
-
-  var oline = ""
-            for (i=0;i<data.other.length;i++){
-            oline += "<tr><td>" + data.other[i].store + "</td><td>" + data.other[i].name + "</td><td>" + data.other[i].slave + "</td><td>" + data.other[i].message +  "</td></tr>"
-            }
-            document.getElementById("other").innerHTML = oline;
-
-            var mline = ""
-            for (var i=0; i<data.missing.length; i++) {
-            mline += "<td>" + data.missing[i].store + " " + data.missing[i].slave + "</td></tr><br>"
-            }
-            document.getElementById("missing").innerHTML = "MISSING FILES = "+data.missing.length
-            document.getElementById("miss").innerHTML = mline;
-
   document.getElementById("progress").setAttribute('class', 'progress-bar progress-bar-success')
   var progress = (data.current_slaves / data.total_slaves * 100).toFixed(0)
   document.getElementById("progress").innerHTML = '<h5>' + progress + '%</h5>'
@@ -56,7 +28,7 @@
   document.getElementById("progress").setAttribute('style', 'width: ' + progress + '%')
 
   setTimeout(reloadStoreData, 5000)
-  });
+  
 
         }
 
@@ -81,9 +53,9 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="nav navbar-nav">
-                <li><a href="/">Dashboard</a></li>
+                <li><a href="/phone/">Dashboard</a></li>
                 <li class="active"><a href="">Integrity Checker</a></li>
-                <li><a href="">All Store Info</a></li>
+                <li><a href="/info/">All Store Info</a></li>
             </ul>
         </div>
     </div>
@@ -107,7 +79,19 @@
                 <div class="cliente">
                     <h4>Z REPORT NOT RUN</h4>
               <table id="nozrep" class="table table-responsive table-striped">
-                <tr><td>Checking &hellip;</td></tr>
+                    {% if zreport|length >= 1 %}
+                        {% for line in zreport %}
+                        <div>
+                            <tr><td>{{ line.message }}</td></tr>
+                        </div>
+                        {% endfor %}           
+                    {% else %}
+                        <div>
+                            <tr><td>Checking &hellip;</td></tr>
+                        </div>
+                    {% endif %}
+
+
               </table>
                 </div>
             </div>
@@ -123,7 +107,14 @@
                 <div class="cliente">
                     <h4>OTHER ERRORS</h4>
               <table id="other" class="table table-responsive table-striped">
-                <tr><td>Checking &hellip;</td></tr>
+                    {% for line in check %}
+                    <div>
+                        {% if line.check_code == 3 %}
+                        <tr><td>{{ line.message }}</td></tr>
+                        {% endif %}
+                    </div>
+                    {% endfor %}     
+           
               </table>
                 </div>
             </div>

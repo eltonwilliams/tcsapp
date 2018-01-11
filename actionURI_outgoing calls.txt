@@ -1,0 +1,5 @@
+http://admin:Connexion1@192.168.23.184/cgi-bin/ConfigManApp.com?number=5834&outgoing_uri=5828@192.168.20.156
+
+hostname - sip-t23g-5828
+
+

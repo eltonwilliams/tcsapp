@@ -1,0 +1,11 @@
+possible soulutions for NextInvoice model:
+code = models.OneToOneField(Store.code)
+
+9. Business Logic in Models
+The best place to allocate business logic for your project is in models, namely method models and model manager. It is possible that method models can only provoke some methods/functions. If it is inconvenient or impossible to allocate logic in models, you need to replace its forms or serializers in tasks.
+
+ni = NextInvoice.objects.filter(code='BD') --returns query set to related store...eg BD
+
+can be dispayed with forloop:
+	for i in ni:
+		print i or print str(i)
