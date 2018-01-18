@@ -9,7 +9,7 @@
                 </style>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>TCS Checker - Integrity Checker</title>
+<title>TCSAPP - Integrity Checker</title>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -48,12 +48,12 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">TCS Checker</a>
+            <a class="navbar-brand">TCSAPP</a>
         </div>
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="nav navbar-nav">
-                <li><a href="/phone/">Dashboard</a></li>
+                <li><a href="/">Dashboard</a></li>
                 <li class="active"><a href="">Integrity Checker</a></li>
                 <li><a href="/info/">All Store Info</a></li>
             </ul>
@@ -78,7 +78,7 @@
             <div class="col-sm-4 text-center" style="background-color: #222222" >
                 <div class="cliente">
                     <h4>Z REPORT NOT RUN</h4>
-              <table id="nozrep" class="table table-responsive table-striped">
+              <table id="nozrep" class="table table-responsive">
                     {% if zreport|length >= 1 %}
                         {% for line in zreport %}
                         <div>
@@ -98,22 +98,32 @@
             <div class="col-sm-4 text-center" style="background-color: #222222">
                 <div class="cliente">
                     <h4>INTEGRITY CHECK FAILED</h4>
-              <table id="integrity" class="table table-responsive table-striped">
+              <table id="integrity" class="table table-responsive">
                 <tr><td>Checking &hellip;</td></tr>
               </table>
                 </div>
             </div>
             <div class="col-sm-4 text-center" style="background-color: #222222">
                 <div class="cliente">
-                    <h4>OTHER ERRORS</h4>
-              <table id="other" class="table table-responsive table-striped">
-                    {% for line in check %}
-                    <div>
-                        {% if line.check_code == 3 %}
-                        <tr><td>{{ line.message }}</td></tr>
-                        {% endif %}
-                    </div>
-                    {% endfor %}     
+                    <h4>OTHER CHECKS</h4>
+              <table id="other" class="table table-responsive">
+                    {% if check|length >= 1 %}
+                        {% for line in check %}
+                        <div>
+                            {% if line.check_code == 3 %}
+                                <tr><td>{{ line.message }}</td></tr>
+                            {% else %}
+                                <tr><td>Checking &hellip;</td></tr>
+                            {% endif %}
+                        </div>
+                        {% endfor %} 
+                    {% else %}
+                        <div>
+                            <tr><td>Checking &hellip;</td></tr>
+                        </div>
+                    {% endif %}
+                        
+                        
            
               </table>
                 </div>

@@ -25,7 +25,9 @@ class Store(models.Model):
     store_manager_tel = models.CharField(max_length=15, default='NONE')
     trainee_manager = models.CharField(max_length=40, default='NONE')
     trainee_manager_tel = models.CharField(max_length=15, default='NONE')
-    #invoices = models.ForeignKey('NextInvoice')
+    status = models.BooleanField(default=True)
+    called = models.BooleanField(default=False)
+    #invoices = models.OneToManyField(NextInvoice)
     
 
    # user = models.ForeignKey('auth.User')   
@@ -33,35 +35,32 @@ class Store(models.Model):
    # call_comment = models.TextField()
    
 
-    def called(self):
-        self.call_date = timezone.now()
-        self.save()
+    # def called(self):
+    #     self.call_date = timezone.now()
+    #     self.save()
 
     def __str__(self):
         return self.code+' - '+self.name
 
 class NextInvoice(models.Model):
-    #code_id = models.ForeignKey(Store, db_column='code')
+    #code = models.ForeignKey(Store)
     code = models.CharField(max_length=2, default='##', unique=False,null=True)
     invoice = models.IntegerField(default=0, unique=False,null=True)
 
     def __str__(self):
-        ##return self.filter(self.code)
         return self.code+" : "+str(self.invoice)
 
     #def checkInvoice(invoice):
 
 
 class IntegrityCheck(models.Model):
-    code = models.CharField(max_length=2, default='##', unique=False,null=True)
-    slave = models.IntegerField(default=0, unique=False,null=True)
-    check_id = models.IntegerField(primary_key=True)
+    #code = models.CharField(max_length=2, default='##', unique=False,null=True)
+    #slave = models.IntegerField(default=0, unique=False,null=True)
+    slave = models.CharField(max_length=3, default='###', primary_key=True)
+    #check_id = models.IntegerField(primary_key=True)
     check_code = models.IntegerField(default=0, unique=False,null=True)
     message = models.CharField(max_length=20, default='NONE')
 
     def __str__(self):
-        ##return self.filter(self.code)
-        if self.check_code == 0:
-            return self.code+" - SLAVE "+str(self.slave)+" - All OK"
-        else:
-            return self.code+" - SLAVE "+str(self.slave)+" - (Error code: "+str(self.check_code)+") - "+self.message
+        #return self.slave
+        return self.slave[:2]+" - SLAVE "+self.slave[2]+" - (Error code: "+str(self.check_code)+") - "+self.message

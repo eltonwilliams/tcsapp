@@ -11,15 +11,39 @@
                 </style>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>TCS Checker - All Stores Info</title>
+<title>TCSAPP - All Stores Info</title>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css">
+
+<style>
+        .red {
+            background-color: rgb(219, 98, 98);
+            color:#000000; 
+        }
+
+        .green {
+            background-color: #48e24a;
+            color:#000000; 
+            font
+        }
+
+        td.details-control {
+            background: url('https://raw.githubusercontent.com/DataTables/DataTables/1.10.7/examples/resources/details_open.png') no-repeat center center;
+            cursor: pointer;
+        }
+
+        tr.shown td.details-control {
+            background: url('https://raw.githubusercontent.com/DataTables/DataTables/1.10.7/examples/resources/details_close.png') no-repeat center center;
+        }
+
+        </style>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/select/1.2.1/js/dataTables.select.min.js"></script>
 <script src="https://cdn.datatables.net/plug-ins/1.10.13/api/fnStandingRedraw.js"></script>
+<!--<script src="https://cdn.datatables.net/responsive/2.2.1/css/responsive.dataTables.min.css"></script>-->
 
 <script>
         var group1;
@@ -44,8 +68,45 @@
         });
 
 
+        /* Formatting function for row details - modify as you need */
+    function format ( d ) {
+    // `d` is the original data object for the row
+    return '<div class="slider">'+
+            '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+                '<tr>'+
+                    '<td>Store Number:</td>'+
+                    '<td><a href="http://admin:Connexion1@sip-t23g-{{out}}/cgi-bin/ConfigManApp.com?number='+d.fields.telephone+'&outgoing_uri={{out}}@192.168.20.156">'+d.fields.telephone+'</a></td>'+
+                '</tr>'+
+                '<tr>'+
+                    '<td>Area Manager:</td>'+
+                    '<td>'+d.fields.area_manager+'</td>'+
+                '</tr>'+
+                '<tr>'+
+                    '<td>Area Manager Tel:</td>'+
+                    '<td>'+d.fields.area_manager_tel+'</td>'+
+                '</tr>'+
+                '<tr>'+
+                    '<td>Store Manager:</td>'+
+                    '<td>'+d.fields.store_manager+'</td>'+
+                '</tr>'+
+                '<tr>'+
+                    '<td>Store Manager Tel:</td>'+
+                    '<td>'+d.fields.store_manager_tel+'</td>'+
+                '</tr>'+
+                '<tr>'+
+                    '<td>Trainee Manager:</td>'+
+                    '<td>'+d.fields.trainee_manager+'</td>'+
+                '</tr>'+
+                '<tr>'+
+                    '<td>Trainee Manager Tel:</td>'+
+                    '<td>'+d.fields.trainee_manager_tel+'</td>'+
+                '</tr>'+
+            '</table>'+
+        '</div>';
+    }
+
     $(document).ready(function() {
-      $('#allstores').DataTable( {
+        var table= $('#allstores').DataTable( {
          
           "ajax":{
             "processing": true,
@@ -54,9 +115,32 @@
           },
 
           "pageLength": 25,
-          "columns":[   { data: "pk" },
+          "columns":[   {
+                            "class": 'details-control',
+                            "orderable": false,
+                            "data": null,
+                            "defaultContent": ''
+                        },
+                        { data: "pk" },
                         { data: "fields.name" },
-                        { data: "fields.telephone",
+                        { data: "fields.status",
+                            render: function(data, type, row) {
+                              if (data === false) {
+                                return 'ERROR'
+                              } else if (data === true) {
+                                return 'SUCCESS'
+                              }
+                              return data;
+                            },
+                            createdCell: function(td, cellData, rowData, row, col) {
+                              if (cellData === false) {
+                                $(td).addClass('red')
+                              } else {
+                                $(td).addClass('green')
+                              }
+                            },
+                        },
+                        { data: "fields.telephone", visible: false,
                           render: function(data, type, row) {
                             if (type === 'display' && data == 'No Data')
                             {
@@ -70,8 +154,8 @@
                             return data;
                             },
                         },
-                        { data: "fields.area_manager" },
-                        { data: "fields.area_manager_tel",
+                        { data: "fields.area_manager", visible: false},
+                        { data: "fields.area_manager_tel", visible: false,
                             render: function(data, type, row) {
                                 if (type === 'display' && data == 'No Data')
                                 {
@@ -85,8 +169,8 @@
                             return data;
                                 },
                         },
-                        { data: "fields.store_manager" },
-                        { data: "fields.store_manager_tel", 
+                        { data: "fields.store_manager" , visible: false},
+                        { data: "fields.store_manager_tel", visible: false,
                             render: function(data, type, row) {
                                 if (type === 'display' && data == 'No Data')
                                 {
@@ -100,8 +184,8 @@
                             return data;
                             },
                         },
-                        { data: "fields.trainee_manager" },
-                        { data: "fields.trainee_manager_tel",
+                        { data: "fields.trainee_manager" ,visible: false},
+                        { data: "fields.trainee_manager_tel",visible: false,
                             render: function(data, type, row) {
                                 if (type === 'display' && data == 'No Data')
                                 {
@@ -115,8 +199,50 @@
                             return data;
                             },           
                         },
+
+                        {
+                            data: "fields.called",
+                            render: function(data, type, row) {
+                              if (type === 'display' && data === false) {
+                                return '<input id="update" type="checkbox">'
+                              } else if (type === 'display' && data === true) {
+                                return '<input id="update" type="checkbox" checked="1">'
+                              }
+                              return data;
+                            },
+                          },
                     ]
       });
+
+      $(document).on('click', '#update', function(e) {
+        //clearTimeout(timeout_id); 
+        console.log("checkbox submitted!")
+        console.log($(this).parent().parent().find('>:first-child').text())
+        //$.post("{% url 'update' %}", {code: $(this).parent().parent().find('>:first-child').text()})
+        //timeout_id = setTimeout(reloadStoreData, 5000);
+      })
+
+      // Add event listener for opening and closing details
+    $('#allstores tbody').on('click', 'td.details-control', function () {
+        var tr = $(this).closest('tr');
+        var row = table.row( tr );
+
+        if ( row.child.isShown() ) {
+            // This row is already open - close it
+            $('div.slider', row.child()).slideUp( function () {
+                row.child.hide();
+                tr.removeClass('shown');
+            } );
+        }
+        else {
+            // Open this row
+            row.child( format(row.data()), 'no-padding' ).show();
+            tr.addClass('shown');
+
+            $('div.slider', row.child()).slideDown();
+        }
+    });
+
     });
     </script>
 
@@ -134,13 +260,13 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">TCS Checker</a>
+            <a class="navbar-brand">TCSAPP</a>
         </div>
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="nav navbar-nav">
-                <li><a href="/phone/">Dashboard</a></li>
-                <li><a href="/">Integrity Checker</a></li>
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="/watcher/">Integrity Checker</a></li>
                 <li class="active"><a href="">All Store Info</a></li>
             </ul>
         </div>
@@ -185,7 +311,9 @@
             <thead>
                 <tr>
                         <th></th>
+                        <th></th>
                         <th>Store</th>
+                        <th>Status</th>
                         <th>Telephone</th>
                         <th>Area Manager</th>
                         <th></th>
@@ -193,12 +321,15 @@
                         <th></th>
                         <th>Trainee Manager</th>
                         <th></th>
+                        <th>called</th>
                 </tr>
             </thead>
             <tfoot>
                 <tr>
                         <th></th>
+                        <th></th>
                         <th>Store</th>
+                        <th>Status</th>
                         <th>Telephone</th>
                         <th>Area Manager</th>
                         <th></th>
@@ -206,6 +337,7 @@
                         <th></th>
                         <th>Trainee Manager</th>
                         <th></th>
+                        <th>called</th>
                 </tr>
             </tfoot>
           </table>
