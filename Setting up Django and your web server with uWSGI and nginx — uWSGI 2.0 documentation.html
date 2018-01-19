@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<!-- saved from url=(0074)http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html -->
+<html class=" js flexbox canvas canvastext webgl no-touch geolocation postmessage websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers applicationcache svg inlinesvg smil svgclippaths" lang="en" style=""><!--<![endif]--><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Setting up Django and your web server with uWSGI and nginx — uWSGI 2.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+
+  
+    <link rel="stylesheet" href="./Setting up Django and your web server with uWSGI and nginx — uWSGI 2.0 documentation_files/sphinx_rtd_theme.css" type="text/css">
+  
+
+  
+        <link rel="index" title="Index" href="http://uwsgi-docs.readthedocs.io/en/latest/genindex.html">
+        <link rel="search" title="Search" href="http://uwsgi-docs.readthedocs.io/en/latest/search.html">
+    <link rel="top" title="uWSGI 2.0 documentation" href="http://uwsgi-docs.readthedocs.io/en/latest/index.html">
+        <link rel="next" title="Running uWSGI on Dreamhost shared hosting" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/dreamhost.html">
+        <link rel="prev" title="The uWSGI Caching Cookbook" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/CachingCookbook.html"> 
+
+  
+  <script type="text/javascript" async="" src="./Setting up Django and your web server with uWSGI and nginx — uWSGI 2.0 documentation_files/ga.js.download"></script><script src="./Setting up Django and your web server with uWSGI and nginx — uWSGI 2.0 documentation_files/modernizr.min.js.download"></script>
+
+
+<!-- RTD Extra Head -->
+
+<!-- 
+Always link to the latest version, as canonical.
+http://docs.readthedocs.org/en/latest/canonical.html
+-->
+<link rel="canonical" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html">
+
+<link rel="stylesheet" href="./Setting up Django and your web server with uWSGI and nginx — uWSGI 2.0 documentation_files/readthedocs-doc-embed.css" type="text/css">
+
+<script type="text/javascript" src="./Setting up Django and your web server with uWSGI and nginx — uWSGI 2.0 documentation_files/readthedocs-data.js.download"></script>
+
+<!-- Add page-specific data, which must exist in the page js, not global -->
+<script type="text/javascript">
+READTHEDOCS_DATA['page'] = 'tutorials/Django_and_nginx' 		
+READTHEDOCS_DATA['source_suffix'] = '.rst'
+</script>
+
+<script type="text/javascript" src="./Setting up Django and your web server with uWSGI and nginx — uWSGI 2.0 documentation_files/readthedocs-dynamic-include.js.download"></script>
+
+<!-- end RTD <extrahead> -->
+</head>
+
+<body class="wy-body-for-nav" role="document" style="">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="http://uwsgi-docs.readthedocs.io/en/latest/index.html" class="icon icon-home"> uWSGI
+          
+
+          
+          </a>
+
+          
+            
+            
+            
+              <div class="version">
+                latest
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="http://uwsgi-docs.readthedocs.io/en/latest/search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs">
+    <input type="hidden" name="check_keywords" value="yes">
+    <input type="hidden" name="area" value="default">
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/WSGIquickstart.html">Quickstart for Python/WSGI applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/PSGIquickstart.html">Quickstart for perl/PSGI applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/RackQuickstart.html">Quickstart for ruby/Rack applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Snippets.html">Snippets</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Download.html">Getting uWSGI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Install.html">Installing uWSGI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/BuildSystem.html">The uWSGI build system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Management.html">Managing the uWSGI server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/LanguagesAndPlatforms.html">Supported languages and platforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/SupportedPlatforms.html">Supported Platforms/Systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/WebServers.html">Web server integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/FAQ.html">Frequently Asked Questions (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/ThingsToKnow.html">Things to know (best practices and “issues”) READ IT !!!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Configuration.html">Configuring uWSGI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/FallbackConfig.html">Fallback configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/ConfigLogic.html">Configuration logic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Options.html">uWSGI Options</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/CustomOptions.html">Defining new options for your instances</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/ParsingOrder.html">How uWSGI parses config files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Vars.html">uwsgi protocol magic variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Protocol.html">The uwsgi Protocol</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/AttachingDaemons.html">Managing external daemons/services</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/MasterFIFO.html">The Master FIFO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Inetd.html">Socket activation with inetd/xinetd</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Upstart.html">Running uWSGI via Upstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Systemd.html">Systemd</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Circus.html">Running uWSGI instances with Circus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Embed.html">Embedding an application in uWSGI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/LogFormat.html">Formatting uWSGI requests logs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/LogEncoders.html">Log encoders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Hooks.html">Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/WorkerOverride.html">Overriding Workers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/ThirdPartyPlugins.html">uWSGI third party plugins</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/CachingCookbook.html">The uWSGI Caching Cookbook</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#"><span class="toctree-expand"></span>Setting up Django and your web server with uWSGI and nginx</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#some-notes-about-this-tutorial">Some notes about this tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#concept">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#before-you-start-setting-up-uwsgi"><span class="toctree-expand"></span>Before you start setting up uWSGI</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#virtualenv">virtualenv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#id1">Django</a></li>
+<li class="toctree-l3"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#about-the-domain-and-port">About the domain and port</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#basic-uwsgi-installation-and-configuration"><span class="toctree-expand"></span>Basic uWSGI installation and configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#install-uwsgi-into-your-virtualenv">Install uWSGI into your virtualenv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#basic-test">Basic test</a></li>
+<li class="toctree-l3"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#test-your-django-project">Test your Django project</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#basic-nginx"><span class="toctree-expand"></span>Basic nginx</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#install-nginx">Install nginx</a></li>
+<li class="toctree-l3"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#configure-nginx-for-your-site">Configure nginx for your site</a></li>
+<li class="toctree-l3"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#deploying-static-files">Deploying static files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#basic-nginx-test">Basic nginx test</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#nginx-and-uwsgi-and-test-py">nginx and uWSGI and test.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#using-unix-sockets-instead-of-ports"><span class="toctree-expand"></span>Using Unix sockets instead of ports</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#if-that-doesn-t-work">If that doesn’t work</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#running-the-django-application-with-uwsgi-and-nginx">Running the Django application with uwsgi and nginx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#configuring-uwsgi-to-run-with-a-ini-file">Configuring uWSGI to run with a .ini file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#install-uwsgi-system-wide">Install uWSGI system-wide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#emperor-mode">Emperor mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#make-uwsgi-startup-when-the-system-boots">Make uWSGI startup when the system boots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#further-configuration"><span class="toctree-expand"></span>Further configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#id2">nginx</a></li>
+<li class="toctree-l3"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#uwsgi">uWSGI</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/dreamhost.html">Running uWSGI on Dreamhost shared hosting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/heroku_python.html">Running python webapps on Heroku with uWSGI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/heroku_ruby.html">Running Ruby/Rack webapps on Heroku with uWSGI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/ReliableFuse.html">Reliably use FUSE filesystems for uWSGI vassals (with Linux)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/DynamicProxying.html">Build a dynamic proxy using RPC and internal routing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/GraphiteAndMetrics.html">Setting up Graphite on Ubuntu using the Metrics subsystem</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/articles/SerializingAccept.html">Serializing accept(), AKA Thundering Herd, AKA the Zeeg Problem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/articles/TheArtOfGracefulReloading.html">The Art of Graceful Reloading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/articles/FunWithPerlEyetoyRaspberrypi.html">Fun with Perl, Eyetoy and RaspberryPi</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/articles/OffloadingWebsocketsAndSSE.html">Offloading Websockets and Server-Sent Events AKA “Combine them with Django safely”</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/articles/WSGIEnvBehaviour.html">WSGI env behaviour policies</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/AlarmSubsystem.html">The uWSGI alarm subsystem (from 1.3)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Caching.html">The uWSGI caching framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/WebCaching.html">WebCaching framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Cron.html">The uWSGI cron-like interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Fastrouter.html">The uWSGI FastRouter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/InternalRouting.html">uWSGI internal routing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Legion.html">The uWSGI Legion subsystem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Locks.html">Locks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Mules.html">uWSGI Mules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/OffloadSubsystem.html">The uWSGI offloading subsystem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Queue.html">The uWSGI queue framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/RPC.html">uWSGI RPC Stack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/SharedArea.html">SharedArea – share memory pages between uWSGI components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Signals.html">The uWSGI Signal Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Spooler.html">The uWSGI Spooler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/SubscriptionServer.html">uWSGI Subscription Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/StaticFiles.html">Serving static files with uWSGI (updated to 1.9)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/SNI.html">SNI - Server Name Identification (virtual hosting for SSL nodes)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/GeoIP.html">The GeoIP plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Transformations.html">uWSGI Transformations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/WebSockets.html">WebSocket support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Metrics.html">The Metrics subsystem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Chunked.html">The Chunked input API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Cheaper.html">The uWSGI cheaper subsystem – adaptive process spawning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Emperor.html">The uWSGI Emperor – multi-app deployment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Broodlord.html">Auto-scaling with Broodlord mode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Zerg.html">Zerg mode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/DynamicApps.html">Adding applications dynamically</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/SSLScaling.html">Scaling SSL connections (uWSGI 1.9)</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Capabilities.html">Setting POSIX Capabilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Cgroups.html">Running uWSGI in a Linux CGroup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/KSM.html">Using Linux KSM in uWSGI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Namespaces.html">Jailing your apps using Linux Namespaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Namespaces.html#the-old-way-the-namespace-option">The old way: the –namespace option</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/FreeBSDJails.html">FreeBSD Jails</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/ForkptyRouter.html">The Forkpty Router</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/TunTapRouter.html">The TunTap Router</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Nagios.html">Monitoring uWSGI with Nagios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/SNMP.html">The embedded SNMP server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/PushingStats.html">Pushing statistics (from 1.4)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Carbon.html">Integration with Graphite/Carbon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/StatsServer.html">The uWSGI Stats Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Metrics.html">The Metrics subsystem</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Async.html">uWSGI asynchronous/non-blocking modes (updated to uWSGI 1.9)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Gevent.html">The Gevent loop engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Tornado.html">The Tornado loop engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/uGreen.html">uGreen – uWSGI Green Threads</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/asyncio.html">The asyncio loop engine (CPython &gt;= 3.4, uWSGI &gt;= 2.0.4)</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Apache.html">Apache support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Cherokee.html">Cherokee support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/HTTP.html">Native HTTP support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/HTTPS.html">HTTPS support (from 1.3)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/SPDY.html">The SPDY router (uWSGI 1.9)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Lighttpd.html">Lighttpd support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Mongrel2.html">Attaching uWSGI to Mongrel2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Nginx.html">Nginx support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/OpenBSDhttpd.html">Using OpenBSD httpd as proxy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/OpenBSDhttpd.html#notes">Notes</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Python.html">Python support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/PyPy.html">The PyPy plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/PHP.html">Running PHP scripts in uWSGI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Perl.html">uWSGI Perl support (PSGI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Ruby.html">Ruby support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Lua.html">Using Lua/WSAPI with uWSGI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/JVM.html">JVM in the uWSGI server (updated to 1.9)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Mono.html">The Mono ASP.NET plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/CGI.html">Running CGI scripts on uWSGI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/GCCGO.html">The GCCGO plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Symcall.html">The Symcall plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/XSLT.html">The XSLT plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/SSI.html">SSI (Server Side Includes) plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/V8.html">uWSGI V8 support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/GridFS.html">The GridFS plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/GlusterFS.html">The GlusterFS plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Rados.html">The RADOS plugin</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Pty.html">The Pty plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/SPNEGO.html">SPNEGO authentication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/LDAP.html">Configuring uWSGI with LDAP</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Erlang.html">Integrating uWSGI with Erlang</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/ManagementFlag.html">Management Flags</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Go.html">uWSGI Go support (1.4 only)</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-2.0.15.html">uWSGI 2.0.15</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-2.0.14.html">uWSGI 2.0.14</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-2.0.13.1.html">uWSGI 2.0.13.1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-2.0.13.html">uWSGI 2.0.13</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-2.0.12.html">uWSGI 2.0.12</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-2.0.11.2.html">uWSGI 2.0.11.2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-2.0.11.1.html">uWSGI 2.0.11.1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-2.0.11.html">uWSGI 2.0.11</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-2.0.10.html">uWSGI 2.0.10</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-2.0.9.html">uWSGI 2.0.9</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-2.0.8.html">uWSGI 2.0.8</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-2.0.7.html">uWSGI 2.0.7</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-2.0.6.html">uWSGI 2.0.6</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-2.0.5.html">uWSGI 2.0.5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-2.0.4.html">uWSGI 2.0.4</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-2.0.3.html">uWSGI 2.0.3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-2.0.2.html">uWSGI 2.0.2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-2.0.1.html">uWSGI 2.0.1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-2.0.html">uWSGI 2.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-1.9.21.html">uWSGI 1.9.21</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-1.9.20.html">uWSGI 1.9.20</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-1.9.19.html">uWSGI 1.9.19</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-1.9.18.html">uWSGI 1.9.18</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-1.9.17.html">uWSGI 1.9.17</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-1.9.16.html">uWSGI 1.9.16</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-1.9.15.html">uWSGI 1.9.15</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-1.9.14.html">uWSGI 1.9.14</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-1.9.13.html">uWSGI 1.9.13</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-1.9.12.html">uWSGI 1.9.12</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-1.9.11.html">uWSGI 1.9.11</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-1.9.10.html">uWSGI 1.9.10</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-1.9.9.html">uWSGI 1.9.9</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-1.9.8.html">uWSGI 1.9.8</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-1.9.7.html">uWSGI 1.9.7</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-1.9.6.html">uWSGI 1.9.6</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-1.9.5.html">uWSGI 1.9.5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-1.9.4.html">uWSGI 1.9.4</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-1.9.3.html">uWSGI 1.9.3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-1.9.2.html">uWSGI 1.9.2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-1.9.1.html">uWSGI 1.9.1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://uwsgi-docs.readthedocs.io/en/latest/Changelog-1.9.html">uWSGI 1.9</a></li>
+</ul>
+
+            
+          
+        </div>
+      <div class="rtd-pro wy-menu"><div class="rtd-pro-about"><a href="https://readthedocs.org/sustainability/advertising/"><span>Sponsored </span><i class="fa fa-info-circle"></i></a></div><a class="rtd-pro-image-wrapper" href="http://readthedocs.org/sustainability/click/163/7pz9eT3TsJGy/" target="_blank"><img class="rtd-pro-image" src="./Setting up Django and your web server with uWSGI and nginx — uWSGI 2.0 documentation_files/saved_resource"></a><span><a class="rtd-pro-link" href="http://readthedocs.org/sustainability/click/163/7pz9eT3TsJGy/" target="_blank">Sentry provides open-source error tracking. Fix production bugs in seconds!</a></span><p class="ethical-callout"><small><em><a href="https://docs.readthedocs.io/en/latest/ethical-advertising.html">Ads served ethically</a></em></small></p></div><div class="rtd-pro-wrapper"></div></div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="http://uwsgi-docs.readthedocs.io/en/latest/index.html">uWSGI</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="http://uwsgi-docs.readthedocs.io/en/latest/index.html">Docs</a> »</li>
+        
+      <li>Setting up Django and your web server with uWSGI and nginx</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/unbit/uwsgi-docs/blob/master/tutorials/Django_and_nginx.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="setting-up-django-and-your-web-server-with-uwsgi-and-nginx">
+<h1>Setting up Django and your web server with uWSGI and nginx<a class="headerlink" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#setting-up-django-and-your-web-server-with-uwsgi-and-nginx" title="Permalink to this headline">¶</a></h1>
+<p>This tutorial is aimed at the Django user who wants to set up a production web
+server. It takes you through the steps required to set up Django so that it
+works nicely with uWSGI and nginx. It covers all three components, providing a
+complete stack of web application and server software.</p>
+<p><a class="reference external" href="http://djangoproject.com/">Django</a> is a high-level Python Web framework that encourages rapid development and clean, pragmatic design.</p>
+<p><a class="reference external" href="http://nginx.org/">nginx</a> (pronounced <em>engine-x</em>) is a free, open-source, high-performance HTTP server and reverse proxy, as well as an IMAP/POP3 proxy server.</p>
+<div class="section" id="some-notes-about-this-tutorial">
+<h2>Some notes about this tutorial<a class="headerlink" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#some-notes-about-this-tutorial" title="Permalink to this headline">¶</a></h2>
+<div class="admonition-note admonition">
+<p class="first admonition-title">Note</p>
+<p class="last">This is a <strong>tutorial</strong>. It is not intended to provide a reference guide,
+never mind an exhaustive reference, to the subject of deployment.</p>
+</div>
+<p>nginx and uWSGI are good choices for Django deployment, but they are not the
+only ones, or the ‘official’ ones. There are excellent alternatives to both, and
+you are encouraged to investigate them.</p>
+<p>The way we deploy Django here is a good way, but it is <strong>not</strong> the <em>only</em> way;
+for some purposes it is probably not even the best way.</p>
+<p>It is however a reliable and easy way, and the material covered here will
+introduce you to concepts and procedures you will need to be familiar with
+whatever software you use for deploying Django. By providing you with a working
+setup, and rehearsing the steps you must take to get there, it will offer you a
+basis for exploring other ways to achieve this.</p>
+<div class="admonition-note admonition">
+<p class="first admonition-title">Note</p>
+<p class="last">This tutorial makes some assumptions about the system you are using.</p>
+</div>
+<p>It is assumed that you are using a Unix-like system, and that it features
+an aptitude-like package manager. However if you need to ask questions like
+“What’s the equivalent of aptitude on Mac OS X?”, you’ll be able to find that
+kind of help fairly easily.</p>
+<p>While this tutorial assumes Django 1.4 or later, which will automatically create
+a wsgi module in your new project, the instructions will work with earlier
+versions. You will though need to obtain that Django wsgi module yourself, and
+you may find that the Django project directory structure is slightly different.</p>
+</div>
+<div class="section" id="concept">
+<h2>Concept<a class="headerlink" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#concept" title="Permalink to this headline">¶</a></h2>
+<p>A web server faces the outside world. It can serve files (HTML, images, CSS,
+etc) directly from the file system. However, it can’t talk <em>directly</em> to Django
+applications; it needs something that will run the application, feed it requests
+from web clients (such as browsers) and return responses.</p>
+<p>A Web Server Gateway Interface - WSGI - does this job. <a class="reference external" href="http://wsgi.org/">WSGI</a> is a Python standard.</p>
+<p>uWSGI is a WSGI implementation. In this tutorial we will set up uWSGI so that it
+creates a Unix socket, and serves responses to the web server via the uwsgi
+protocol. At the end, our complete stack of components will look like this:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>the web client &lt;-&gt; the web server &lt;-&gt; the socket &lt;-&gt; uwsgi &lt;-&gt; Django
+</pre></div>
+</div>
+</div>
+<div class="section" id="before-you-start-setting-up-uwsgi">
+<h2>Before you start setting up uWSGI<a class="headerlink" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#before-you-start-setting-up-uwsgi" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="virtualenv">
+<h3>virtualenv<a class="headerlink" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#virtualenv" title="Permalink to this headline">¶</a></h3>
+<p>Make sure you are in a virtualenv for the software we need to install (we will
+describe how to install a system-wide uwsgi later):</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>virtualenv uwsgi-tutorial
+<span class="nb">cd</span> uwsgi-tutorial
+<span class="nb">source</span> bin/activate
+</pre></div>
+</div>
+</div>
+<div class="section" id="id1">
+<h3>Django<a class="headerlink" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#id1" title="Permalink to this headline">¶</a></h3>
+<p>Install Django into your virtualenv, create a new project, and <code class="docutils literal"><span class="pre">cd</span></code> into the
+project:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>pip install Django
+django-admin.py startproject mysite
+<span class="nb">cd</span> mysite
+</pre></div>
+</div>
+</div>
+<div class="section" id="about-the-domain-and-port">
+<h3>About the domain and port<a class="headerlink" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#about-the-domain-and-port" title="Permalink to this headline">¶</a></h3>
+<p>In this tutorial we will call your domain <code class="docutils literal"><span class="pre">example.com</span></code>. Substitute your own
+FQDN or IP address.</p>
+<p>Throughout, we’ll be using port 8000 for the web server to publish on, just like
+the Django runserver does by default. You can use whatever port you want of
+course, but I have chosen this one so it doesn’t conflict with anything a web
+server might be doing already.</p>
+</div>
+</div>
+<div class="section" id="basic-uwsgi-installation-and-configuration">
+<h2>Basic uWSGI installation and configuration<a class="headerlink" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#basic-uwsgi-installation-and-configuration" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="install-uwsgi-into-your-virtualenv">
+<h3>Install uWSGI into your virtualenv<a class="headerlink" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#install-uwsgi-into-your-virtualenv" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>pip install uwsgi
+</pre></div>
+</div>
+<p>Of course there are other ways to install uWSGI, but this one is as good as
+any. Remember that you will need to have Python development packages installed.
+In the case of Debian, or Debian-derived systems such as Ubuntu, what you need
+to have installed is <code class="docutils literal"><span class="pre">pythonX.Y-dev</span></code>, where X.Y is your version of Python.</p>
+</div>
+<div class="section" id="basic-test">
+<h3>Basic test<a class="headerlink" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#basic-test" title="Permalink to this headline">¶</a></h3>
+<p>Create a file called <code class="docutils literal"><span class="pre">test.py</span></code>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># test.py</span>
+def application<span class="o">(</span>env, start_response<span class="o">)</span>:
+    start_response<span class="o">(</span><span class="s1">'200 OK'</span>, <span class="o">[(</span><span class="s1">'Content-Type'</span>,<span class="s1">'text/html'</span><span class="o">)])</span>
+    <span class="k">return</span> <span class="o">[</span>b<span class="s2">"Hello World"</span><span class="o">]</span> <span class="c1"># python3</span>
+    <span class="c1">#return ["Hello World"] # python2</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Take into account that Python 3 requires <code class="docutils literal"><span class="pre">bytes()</span></code>.</p>
+</div>
+<p>Run uWSGI:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>uwsgi --http :8000 --wsgi-file test.py
+</pre></div>
+</div>
+<p>The options mean:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">http</span> <span class="pre">:8000</span></code>: use protocol http, port 8000</li>
+<li><code class="docutils literal"><span class="pre">wsgi-file</span> <span class="pre">test.py</span></code>: load the specified file, test.py</li>
+</ul>
+<p>This should serve a ‘hello world’ message directly to the browser on port 8000.
+Visit:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>http://example.com:8000
+</pre></div>
+</div>
+<p>to check. If so, it means the following stack of components works:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>the web client &lt;-&gt; uWSGI &lt;-&gt; Python
+</pre></div>
+</div>
+</div>
+<div class="section" id="test-your-django-project">
+<h3>Test your Django project<a class="headerlink" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#test-your-django-project" title="Permalink to this headline">¶</a></h3>
+<p>Now we want uWSGI to do the same thing, but to run a Django site instead of the
+<code class="docutils literal"><span class="pre">test.py</span></code> module.</p>
+<p>If you haven’t already done so, make sure that your <code class="docutils literal"><span class="pre">mysite</span></code> project actually works:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>python manage.py runserver <span class="m">0</span>.0.0.0:8000
+</pre></div>
+</div>
+<p>And if it that works, run it using uWSGI:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>uwsgi --http :8000 --module mysite.wsgi
+</pre></div>
+</div>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">module</span> <span class="pre">mysite.wsgi</span></code>: load the specified wsgi module</li>
+</ul>
+<p>Point your browser at the server; if the site appears, it means uWSGI is able to
+serve your Django application from your virtualenv, and this stack operates
+correctly:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>the web client &lt;-&gt; uWSGI &lt;-&gt; Django
+</pre></div>
+</div>
+<p>Now normally we won’t have the browser speaking directly to uWSGI. That’s a job
+for the webserver, which will act as a go-between.</p>
+</div>
+</div>
+<div class="section" id="basic-nginx">
+<h2>Basic nginx<a class="headerlink" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#basic-nginx" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="install-nginx">
+<h3>Install nginx<a class="headerlink" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#install-nginx" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>sudo apt-get install nginx
+sudo /etc/init.d/nginx start    <span class="c1"># start nginx</span>
+</pre></div>
+</div>
+<p>And now check that the nginx is serving by visiting it in a web browser on port
+80 - you should get a message from nginx: “Welcome to nginx!”. That means these
+components of the full stack are working together:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>the web client &lt;-&gt; the web server
+</pre></div>
+</div>
+<p>If something else <em>is</em> already serving on port 80 and you want to use nginx
+there, you’ll have to reconfigure nginx to serve on a different port. For this
+tutorial though, we’re going to be using port 8000.</p>
+</div>
+<div class="section" id="configure-nginx-for-your-site">
+<h3>Configure nginx for your site<a class="headerlink" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#configure-nginx-for-your-site" title="Permalink to this headline">¶</a></h3>
+<p>You will need the <code class="docutils literal"><span class="pre">uwsgi_params</span></code> file, which is available in the <code class="docutils literal"><span class="pre">nginx</span></code>
+directory of the uWSGI distribution, or from
+<a class="reference external" href="https://github.com/nginx/nginx/blob/master/conf/uwsgi_params">https://github.com/nginx/nginx/blob/master/conf/uwsgi_params</a></p>
+<p>Copy it into your project directory. In a moment we will tell nginx to refer to
+it.</p>
+<p>Now create a file called mysite_nginx.conf, and put this in it:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># mysite_nginx.conf</span>
+
+<span class="c1"># the upstream component nginx needs to connect to</span>
+upstream django <span class="o">{</span>
+    <span class="c1"># server unix:///path/to/your/mysite/mysite.sock; # for a file socket</span>
+    server <span class="m">127</span>.0.0.1:8001<span class="p">;</span> <span class="c1"># for a web port socket (we'll use this first)</span>
+<span class="o">}</span>
+
+<span class="c1"># configuration of the server</span>
+server <span class="o">{</span>
+    <span class="c1"># the port your site will be served on</span>
+    listen      <span class="m">8000</span><span class="p">;</span>
+    <span class="c1"># the domain name it will serve for</span>
+    server_name .example.com<span class="p">;</span> <span class="c1"># substitute your machine's IP address or FQDN</span>
+    charset     utf-8<span class="p">;</span>
+
+    <span class="c1"># max upload size</span>
+    client_max_body_size 75M<span class="p">;</span>   <span class="c1"># adjust to taste</span>
+
+    <span class="c1"># Django media</span>
+    location /media  <span class="o">{</span>
+        <span class="nb">alias</span> /path/to/your/mysite/media<span class="p">;</span>  <span class="c1"># your Django project's media files - amend as required</span>
+    <span class="o">}</span>
+
+    location /static <span class="o">{</span>
+        <span class="nb">alias</span> /path/to/your/mysite/static<span class="p">;</span> <span class="c1"># your Django project's static files - amend as required</span>
+    <span class="o">}</span>
+
+    <span class="c1"># Finally, send all non-media requests to the Django server.</span>
+    location / <span class="o">{</span>
+        uwsgi_pass  django<span class="p">;</span>
+        include     /path/to/your/mysite/uwsgi_params<span class="p">;</span> <span class="c1"># the uwsgi_params file you installed</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>This conf file tells nginx to serve up media and static files from the
+filesystem, as well as handle requests that require Django’s intervention. For a
+large deployment it is considered good practice to let one server handle
+static/media files, and another handle Django applications, but for now, this
+will do just fine.</p>
+<p>Symlink to this file from /etc/nginx/sites-enabled so nginx can see it:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>sudo ln -s ~/path/to/your/mysite/mysite_nginx.conf /etc/nginx/sites-enabled/
+</pre></div>
+</div>
+</div>
+<div class="section" id="deploying-static-files">
+<h3>Deploying static files<a class="headerlink" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#deploying-static-files" title="Permalink to this headline">¶</a></h3>
+<p>Before running nginx, you have to collect all Django static files in the static
+folder. First of all you have to edit mysite/settings.py adding:</p>
+<div class="highlight-Python"><div class="highlight"><pre><span></span><span class="n">STATIC_ROOT</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">BASE_DIR</span><span class="p">,</span> <span class="s2">"static/"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>and then run</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>python manage.py collectstatic
+</pre></div>
+</div>
+</div>
+<div class="section" id="basic-nginx-test">
+<h3>Basic nginx test<a class="headerlink" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#basic-nginx-test" title="Permalink to this headline">¶</a></h3>
+<p>Restart nginx:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>sudo /etc/init.d/nginx restart
+</pre></div>
+</div>
+<p>To check that media files are being served correctly, add an image called
+<code class="docutils literal"><span class="pre">media.png</span></code> to the <code class="docutils literal"><span class="pre">/path/to/your/project/project/media</span> <span class="pre">directory</span></code>, then
+visit <a class="reference external" href="http://example.com:8000/media/media.png">http://example.com:8000/media/media.png</a> - if this works, you’ll know at
+least that nginx is serving files correctly.</p>
+<p>It is worth not just restarting nginx, but actually stopping and then starting
+it again, which will inform you if there is a problem, and where it is.</p>
+</div>
+</div>
+<div class="section" id="nginx-and-uwsgi-and-test-py">
+<h2>nginx and uWSGI and test.py<a class="headerlink" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#nginx-and-uwsgi-and-test-py" title="Permalink to this headline">¶</a></h2>
+<p>Let’s get nginx to speak to the “hello world” <code class="docutils literal"><span class="pre">test.py</span></code> application.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>uwsgi --socket :8001 --wsgi-file test.py
+</pre></div>
+</div>
+<p>This is nearly the same as before, except this time one of the options is
+different:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">socket</span> <span class="pre">:8001</span></code>: use protocol uwsgi, port 8001</li>
+</ul>
+<p>nginx meanwhile has been configured to communicate with uWSGI on that port, and
+with the outside world on port 8000. Visit:</p>
+<p><a class="reference external" href="http://example.com:8000/">http://example.com:8000/</a></p>
+<p>to check. And this is our stack:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>the web client &lt;-&gt; the web server &lt;-&gt; the socket &lt;-&gt; uWSGI &lt;-&gt; Python
+</pre></div>
+</div>
+<p>Meanwhile, you can try to have a look at the uswgi output at
+<a class="reference external" href="http://example.com:8001/">http://example.com:8001</a> - but quite probably, it won’t work because your browser
+speaks http, not uWSGI, though you should see output from uWSGI in your
+terminal.</p>
+</div>
+<div class="section" id="using-unix-sockets-instead-of-ports">
+<h2>Using Unix sockets instead of ports<a class="headerlink" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#using-unix-sockets-instead-of-ports" title="Permalink to this headline">¶</a></h2>
+<p>So far we have used a TCP port socket, because it’s simpler, but in fact it’s
+better to use Unix sockets than ports - there’s less overhead.</p>
+<p>Edit <code class="docutils literal"><span class="pre">mysite_nginx.conf</span></code>, changing it to match:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>server unix:///path/to/your/mysite/mysite.sock<span class="p">;</span> <span class="c1"># for a file socket</span>
+<span class="c1"># server 127.0.0.1:8001; # for a web port socket (we'll use this first)</span>
+</pre></div>
+</div>
+<p>and restart nginx.</p>
+<p>Run uWSGI again:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>uwsgi --socket mysite.sock --wsgi-file test.py
+</pre></div>
+</div>
+<p>This time the <code class="docutils literal"><span class="pre">socket</span></code> option tells uWSGI which file to use.</p>
+<p>Try <a class="reference external" href="http://example.com:8000/">http://example.com:8000/</a> in the browser.</p>
+<div class="section" id="if-that-doesn-t-work">
+<h3>If that doesn’t work<a class="headerlink" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#if-that-doesn-t-work" title="Permalink to this headline">¶</a></h3>
+<p>Check your nginx error log(/var/log/nginx/error.log). If you see something like:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>connect<span class="o">()</span> to unix:///path/to/your/mysite/mysite.sock failed <span class="o">(</span><span class="m">13</span>: Permission
+denied<span class="o">)</span>
+</pre></div>
+</div>
+<p>then probably you need to manage the permissions on the socket so that nginx is
+allowed to use it.</p>
+<p>Try:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>uwsgi --socket mysite.sock --wsgi-file test.py --chmod-socket<span class="o">=</span><span class="m">666</span> <span class="c1"># (very permissive)</span>
+</pre></div>
+</div>
+<p>or:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>uwsgi --socket mysite.sock --wsgi-file test.py --chmod-socket<span class="o">=</span><span class="m">664</span> <span class="c1"># (more sensible)</span>
+</pre></div>
+</div>
+<p>You may also have to add your user to nginx’s group (which is probably
+www-data), or vice-versa, so that nginx can read and write to your socket
+properly.</p>
+<p>It’s worth keeping the output of the nginx log running in a terminal window so
+you can easily refer to it while troubleshooting.</p>
+</div>
+</div>
+<div class="section" id="running-the-django-application-with-uwsgi-and-nginx">
+<h2>Running the Django application with uwsgi and nginx<a class="headerlink" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#running-the-django-application-with-uwsgi-and-nginx" title="Permalink to this headline">¶</a></h2>
+<p>Let’s run our Django application:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>uwsgi --socket mysite.sock --module mysite.wsgi --chmod-socket<span class="o">=</span><span class="m">664</span>
+</pre></div>
+</div>
+<p>Now uWSGI and nginx should be serving up not just a “Hello World” module, but
+your Django project.</p>
+</div>
+<div class="section" id="configuring-uwsgi-to-run-with-a-ini-file">
+<h2>Configuring uWSGI to run with a .ini file<a class="headerlink" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#configuring-uwsgi-to-run-with-a-ini-file" title="Permalink to this headline">¶</a></h2>
+<p>We can put the same options that we used with uWSGI into a file, and then ask
+uWSGI to run with that file. It makes it easier to manage configurations.</p>
+<p>Create a file called <code class="docutils literal"><span class="pre">`mysite_uwsgi.ini`</span></code>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># mysite_uwsgi.ini file</span>
+<span class="o">[</span>uwsgi<span class="o">]</span>
+
+<span class="c1"># Django-related settings</span>
+<span class="c1"># the base directory (full path)</span>
+<span class="nv">chdir</span>           <span class="o">=</span> /path/to/your/project
+<span class="c1"># Django's wsgi file</span>
+<span class="nv">module</span>          <span class="o">=</span> project.wsgi
+<span class="c1"># the virtualenv (full path)</span>
+<span class="nv">home</span>            <span class="o">=</span> /path/to/virtualenv
+
+<span class="c1"># process-related settings</span>
+<span class="c1"># master</span>
+<span class="nv">master</span>          <span class="o">=</span> <span class="nb">true</span>
+<span class="c1"># maximum number of worker processes</span>
+<span class="nv">processes</span>       <span class="o">=</span> <span class="m">10</span>
+<span class="c1"># the socket (use the full path to be safe</span>
+<span class="nv">socket</span>          <span class="o">=</span> /path/to/your/project/mysite.sock
+<span class="c1"># ... with appropriate permissions - may be needed</span>
+<span class="c1"># chmod-socket    = 664</span>
+<span class="c1"># clear environment on exit</span>
+<span class="nv">vacuum</span>          <span class="o">=</span> <span class="nb">true</span>
+</pre></div>
+</div>
+<p>And run uswgi using this file:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>uwsgi --ini mysite_uwsgi.ini <span class="c1"># the --ini option is used to specify a file</span>
+</pre></div>
+</div>
+<p>Once again, test that the Django site works as expected.</p>
+</div>
+<div class="section" id="install-uwsgi-system-wide">
+<h2>Install uWSGI system-wide<a class="headerlink" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#install-uwsgi-system-wide" title="Permalink to this headline">¶</a></h2>
+<p>So far, uWSGI is only installed in our virtualenv; we’ll need it installed
+system-wide for deployment purposes.</p>
+<p>Deactivate your virtualenv:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>deactivate
+</pre></div>
+</div>
+<p>and install uWSGI system-wide:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>sudo pip install uwsgi
+
+<span class="c1"># Or install LTS (long term support).</span>
+pip install https://projects.unbit.it/downloads/uwsgi-lts.tar.gz
+</pre></div>
+</div>
+<p>The uWSGI wiki describes several <a class="reference external" href="https://projects.unbit.it/uwsgi/wiki/Install">installation procedures</a>. Before installing
+uWSGI system-wide, it’s worth considering which version to choose and the most
+apppropriate way of installing it.</p>
+<p>Check again that you can still run uWSGI just like you did before:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>uwsgi --ini mysite_uwsgi.ini <span class="c1"># the --ini option is used to specify a file</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="emperor-mode">
+<h2>Emperor mode<a class="headerlink" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#emperor-mode" title="Permalink to this headline">¶</a></h2>
+<p>uWSGI can run in ‘emperor’ mode. In this mode it keeps an eye on a directory of
+uWSGI config files, and will spawn instances (‘vassals’) for each one it finds.</p>
+<p>Whenever a config file is amended, the emperor will automatically restart the
+vassal.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># create a directory for the vassals</span>
+sudo mkdir /etc/uwsgi
+sudo mkdir /etc/uwsgi/vassals
+<span class="c1"># symlink from the default config directory to your config file</span>
+sudo ln -s /path/to/your/mysite/mysite_uwsgi.ini /etc/uwsgi/vassals/
+<span class="c1"># run the emperor</span>
+uwsgi --emperor /etc/uwsgi/vassals --uid www-data --gid www-data
+</pre></div>
+</div>
+<p>You may need to run uWSGI with sudo:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>sudo uwsgi --emperor /etc/uwsgi/vassals --uid www-data --gid www-data
+</pre></div>
+</div>
+<p>The options mean:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">emperor</span></code>: where to look for vassals (config files)</li>
+<li><code class="docutils literal"><span class="pre">uid</span></code>: the user id of the process once it’s started</li>
+<li><code class="docutils literal"><span class="pre">gid</span></code>: the group id of the process once it’s started</li>
+</ul>
+<p>Check the site; it should be running.</p>
+</div>
+<div class="section" id="make-uwsgi-startup-when-the-system-boots">
+<h2>Make uWSGI startup when the system boots<a class="headerlink" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#make-uwsgi-startup-when-the-system-boots" title="Permalink to this headline">¶</a></h2>
+<p>The last step is to make it all happen automatically at system startup time.</p>
+<p>For many systems, the easiest (if not the best) way to do this is to use the <code class="docutils literal"><span class="pre">rc.local</span></code> file.</p>
+<p>Edit <code class="docutils literal"><span class="pre">/etc/rc.local</span></code> and add:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>/usr/local/bin/uwsgi --emperor /etc/uwsgi/vassals --uid www-data --gid www-data --daemonize /var/log/uwsgi-emperor.log
+</pre></div>
+</div>
+<p>before the line “exit 0”.</p>
+<p>And that should be it!</p>
+</div>
+<div class="section" id="further-configuration">
+<h2>Further configuration<a class="headerlink" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#further-configuration" title="Permalink to this headline">¶</a></h2>
+<p>It is important to understand that this has been a <em>tutorial</em>, to get you
+started. You <strong>do</strong> need to read the nginx and uWSGI documentation, and study
+the options available before deployment in a production environment.</p>
+<p>Both nginx and uWSGI benefit from friendly communities, who are able to offer
+invaluable advice about configuration and usage.</p>
+<div class="section" id="id2">
+<h3>nginx<a class="headerlink" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#id2" title="Permalink to this headline">¶</a></h3>
+<p>General configuration of nginx is not within the scope of this tutorial though
+you’ll probably want it to listen on port 80, not 8000, for a production
+website.</p>
+<p>You should also configure a separate nginx location block for serving non-Django
+files. For example, it’s inefficient to serve static files via uWSGI. Instead,
+serve them directly from Nginx and completely bypass uWSGI.</p>
+</div>
+<div class="section" id="uwsgi">
+<h3>uWSGI<a class="headerlink" href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html#uwsgi" title="Permalink to this headline">¶</a></h3>
+<p>uWSGI supports multiple ways to configure it. See <a class="reference external" href="https://uwsgi-docs.readthedocs.io/">uWSGI’s documentation</a> and
+<a class="reference external" href="https://projects.unbit.it/uwsgi/wiki/Example">examples</a>.</p>
+<p>Some uWSGI options have been mentioned in this tutorial; others you ought to
+look at for a deployment in production include (listed here with example
+settings):</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="nv">env</span> <span class="o">=</span> <span class="nv">DJANGO_SETTINGS_MODULE</span><span class="o">=</span>mysite.settings <span class="c1"># set an environment variable</span>
+safe-pidfile <span class="o">=</span> /tmp/project-master.pid <span class="c1"># create a pidfile</span>
+<span class="nv">harakiri</span> <span class="o">=</span> <span class="m">20</span> <span class="c1"># respawn processes taking more than 20 seconds</span>
+limit-as <span class="o">=</span> <span class="m">128</span> <span class="c1"># limit the project to 128 MB</span>
+max-requests <span class="o">=</span> <span class="m">5000</span> <span class="c1"># respawn processes after serving 5000 requests</span>
+<span class="nv">daemonize</span> <span class="o">=</span> /var/log/uwsgi/yourproject.log <span class="c1"># background the process &amp; log</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/dreamhost.html" class="btn btn-neutral float-right" title="Running uWSGI on Dreamhost shared hosting" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/CachingCookbook.html" class="btn btn-neutral" title="The uWSGI Caching Cookbook" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr>
+
+  <div role="contentinfo">
+    <p>
+        © Copyright 2012-2016, uWSGI.
+      
+        <span class="commit">
+          Revision <code>3a562c59</code>.
+        </span>
+      
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org/">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Read the Docs</span>
+      v: latest
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions"><!-- Inserted RTD Footer -->
+<div class="injected">
+
+  
+
+      
+      
+      
+      <dl>
+        <dt>Versions</dt>
+        
+         <strong> 
+        <dd><a href="http://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html">latest</a></dd>
+         </strong> 
+        
+      </dl>
+      
+      
+
+      
+      
+      <dl>
+        <dt>Downloads</dt>
+        
+        <dd><a href="http://readthedocs.org/projects/uwsgi-docs/downloads/pdf/latest/">PDF</a></dd>
+        
+        <dd><a href="http://readthedocs.org/projects/uwsgi-docs/downloads/htmlzip/latest/">HTML</a></dd>
+        
+        <dd><a href="http://readthedocs.org/projects/uwsgi-docs/downloads/epub/latest/">Epub</a></dd>
+        
+      </dl>
+      
+      
+
+      
+      <dl>
+        <!-- These are kept as relative links for internal installs that are http -->
+        <dt>On Read the Docs</dt>
+        <dd>
+          <a href="http://readthedocs.org/projects/uwsgi-docs/">Project Home</a>
+        </dd>
+        <dd>
+          <a href="http://readthedocs.org/projects/uwsgi-docs/builds/">Builds</a>
+        </dd>
+        <dd>
+          <a href="http://readthedocs.org/projects/uwsgi-docs/downloads/">Downloads</a>
+        </dd>
+      </dl>
+      
+
+      
+
+      
+      <dl>
+        <dt>On GitHub</dt>
+        <dd>
+          <a href="https://github.com/unbit/uwsgi-docs/blob/master/tutorials/Django_and_nginx.rst">View</a>
+        </dd>
+        <dd>
+          <a href="https://github.com/unbit/uwsgi-docs/edit/master/tutorials/Django_and_nginx.rst">Edit</a>
+        </dd>
+      </dl>
+      
+      
+
+      
+      <dl>
+        <dt>Search</dt>
+        <dd>
+          <div style="padding: 6px;">
+            <form id="flyout-search-form" class="wy-form" target="_blank" action="http://readthedocs.org/projects/uwsgi-docs/search/" method="get">
+              <input type="text" name="q" placeholder="Search docs">
+              </form>
+          </div>
+        </dd>
+      </dl>
+      
+
+
+
+      <hr>
+      
+      Free document hosting provided by <a href="https://readthedocs.org/">Read the Docs</a>.
+      
+
+      
+
+</div>
+</div>
+  </div>
+
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'2.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="./Setting up Django and your web server with uWSGI and nginx — uWSGI 2.0 documentation_files/jquery-2.0.3.min.js.download"></script>
+      <script type="text/javascript" src="./Setting up Django and your web server with uWSGI and nginx — uWSGI 2.0 documentation_files/jquery-migrate-1.2.1.min.js.download"></script>
+      <script type="text/javascript" src="./Setting up Django and your web server with uWSGI and nginx — uWSGI 2.0 documentation_files/underscore.js.download"></script>
+      <script type="text/javascript" src="./Setting up Django and your web server with uWSGI and nginx — uWSGI 2.0 documentation_files/doctools.js.download"></script>
+      <script type="text/javascript" src="./Setting up Django and your web server with uWSGI and nginx — uWSGI 2.0 documentation_files/readthedocs-doc-embed.js.download"></script>
+
+  
+
+  
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+
+</body></html>

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+    #update2 + label{
+        display: block;
+        margin: 0.2em;
+        cursor: pointer;
+    }
+
+    #update2{
+        display:none;   
+    }
+
+    #update2 + label:before{
+        font-family: "FontAwesome";
+        content:"\f095";  
+        border:0.1em solid #000;
+        border-radius: 1.2em;
+        display: inline-block;
+        width: 1.5em;
+        height: 1.5em;
+        padding-left: 0.3em;
+        padding-bottom: 0.3em;
+        margin-right: 0.2em;
+        vertical-align: bottom;
+        color:transparent; 
+        transition: .2s;
+        }
+        #update2:checked + label:before{
+            background-color: mediumseagreen;
+            border-color: mediumseagreen;
+            color: #fff;
+            
+        }
+      </style>
+
+    <title>checkbox</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+  </head>
+
+  <body>
+
+
+    <form><input id="update2" type="checkbox"><label for ="update2">called</label></form>
+
+  </body>
+</html>

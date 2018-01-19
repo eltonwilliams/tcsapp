@@ -9,12 +9,25 @@ from django.db import transaction
 
 from .models import Store, NextInvoice, IntegrityCheck, Yealink
 
+from .forms import HomeForm
+
 import os, glob, re
+import threading
 from datetime import datetime 
 
 
-def update(): 
-    print "got to the update"
+def update(reqeust): 
+    if reqeust.method == 'POST':
+        store_code = reqeust.POST['store']
+        DBstatus = Store.objects.get(code = store_code)
+        if not DBstatus.called:
+            DBstatus.called = True
+        else:
+            DBstatus.called = False
+        DBstatus.save()
+    return HttpResponse('')
+
+
 
 
 
@@ -67,8 +80,7 @@ def watcher(request):
 
 def info(request):
     ip_phone = Yealink.objects.get(user__username='wgoosen')
-
-    return render(request, 'info.html',{'out': ip_phone.ext })
+    return render(request, 'info.html',{'out': ip_phone.ext})
 
 def table_info(request):
     store_info = Store.objects.all()
@@ -185,6 +197,7 @@ def refresh_codes():
             time_elapsed = datetime.now() - start
             print 'Refreshing Store info run time: {}'.format(time_elapsed)
             print "Store Data Imported Successfully"
+            threading.Timer(10, refresh_codes).start()
 
 
 def testStuff():

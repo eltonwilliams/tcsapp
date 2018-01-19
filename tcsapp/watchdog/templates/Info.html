@@ -38,6 +38,15 @@
 
         </style>
 
+        <style type=text/css>
+            .table_check{
+                width: 30px;
+                height: 30px;
+                background-color: #ddd;
+
+            }
+        </style>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
@@ -83,7 +92,7 @@
                 '</tr>'+
                 '<tr>'+
                     '<td>Area Manager Tel:</td>'+
-                    '<td>'+d.fields.area_manager_tel+'</td>'+
+                    '<td><a href="http://admin:Connexion1@sip-t23g-{{out}}/cgi-bin/ConfigManApp.com?number='+d.fields.area_manager_tel+'&outgoing_uri={{out}}@192.168.20.156">'+d.fields.area_manager_tel+'</a></td>'+
                 '</tr>'+
                 '<tr>'+
                     '<td>Store Manager:</td>'+
@@ -91,7 +100,7 @@
                 '</tr>'+
                 '<tr>'+
                     '<td>Store Manager Tel:</td>'+
-                    '<td>'+d.fields.store_manager_tel+'</td>'+
+                    '<td><a href="http://admin:Connexion1@sip-t23g-{{out}}/cgi-bin/ConfigManApp.com?number='+d.fields.store_manager_tel+'&outgoing_uri={{out}}@192.168.20.156">'+d.fields.store_manager_tel+'</a></td>'+
                 '</tr>'+
                 '<tr>'+
                     '<td>Trainee Manager:</td>'+
@@ -99,7 +108,7 @@
                 '</tr>'+
                 '<tr>'+
                     '<td>Trainee Manager Tel:</td>'+
-                    '<td>'+d.fields.trainee_manager_tel+'</td>'+
+                    '<td><a href="http://admin:Connexion1@sip-t23g-{{out}}/cgi-bin/ConfigManApp.com?number='+d.fields.trainee_manager_tel+'&outgoing_uri={{out}}@192.168.20.156">'+d.fields.trainee_manager_tel+'</a></td>'+
                 '</tr>'+
             '</table>'+
         '</div>';
@@ -115,15 +124,10 @@
           },
 
           "pageLength": 25,
-          "columns":[   {
-                            "class": 'details-control',
-                            "orderable": false,
-                            "data": null,
-                            "defaultContent": ''
-                        },
+          "columns":[   
                         { data: "pk" },
                         { data: "fields.name" },
-                        { data: "fields.status",
+                        { data: "fields.status",  width: "5%",
                             render: function(data, type, row) {
                               if (data === false) {
                                 return 'ERROR'
@@ -201,7 +205,7 @@
                         },
 
                         {
-                            data: "fields.called",
+                            data: "fields.called", width: "2%",
                             render: function(data, type, row) {
                               if (type === 'display' && data === false) {
                                 return '<input id="update" type="checkbox">'
@@ -211,6 +215,13 @@
                               return data;
                             },
                           },
+                          {
+                            width: "2%",
+                            class: 'details-control',
+                            orderable : false,
+                            data : null,
+                            defaultContent : ''
+                        },
                     ]
       });
 
@@ -218,6 +229,21 @@
         //clearTimeout(timeout_id); 
         console.log("checkbox submitted!")
         console.log($(this).parent().parent().find('>:first-child').text())
+
+        $.ajax
+        ({
+            type : 'POST',
+            url : "{% url 'update' %}",
+            data :  {
+                        store : $(this).parent().parent().find('>:first-child').text(),
+                        //csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                    },
+            success:function(){
+               // alert("Updated called status")
+            }
+            
+        })
+        
         //$.post("{% url 'update' %}", {code: $(this).parent().parent().find('>:first-child').text()})
         //timeout_id = setTimeout(reloadStoreData, 5000);
       })
@@ -275,6 +301,7 @@
 
 <div class="jumbotron text-center" style="background-color: #222222">
         <h2>All Stores Infomation</h2>
+        <a class="label label-success" href="/update/">Update</a>
       </div>
       
       <div class="container">
@@ -307,37 +334,37 @@
             </div>
     
             <div class="col-sm-12" >
-                <table class="table table-bordered table-hover" width="100%" cellspacing="0" id="allstores">
+                <table class="table table-bordered" width="100%" cellspacing="0" id="allstores">
             <thead>
                 <tr>
-                        <th></th>
                         <th></th>
                         <th>Store</th>
                         <th>Status</th>
                         <th>Telephone</th>
+                        <th></th>
                         <th>Area Manager</th>
                         <th></th>
                         <th>Store Manager</th>
                         <th></th>
                         <th>Trainee Manager</th>
-                        <th></th>
-                        <th>called</th>
+                        <th>Called</th>
+                        <th>Extra Details</th>
                 </tr>
             </thead>
             <tfoot>
                 <tr>
-                        <th></th>
-                        <th></th>
-                        <th>Store</th>
-                        <th>Status</th>
-                        <th>Telephone</th>
-                        <th>Area Manager</th>
-                        <th></th>
-                        <th>Store Manager</th>
-                        <th></th>
-                        <th>Trainee Manager</th>
-                        <th></th>
-                        <th>called</th>
+                    <th></th>
+                    <th>Store</th>
+                    <th>Status</th>
+                    <th>Telephone</th>
+                    <th></th>
+                    <th>Area Manager</th>
+                    <th></th>
+                    <th>Store Manager</th>
+                    <th></th>
+                    <th>Trainee Manager</th>
+                    <th>Called</th>
+                    <th>Extra Details</th>
                 </tr>
             </tfoot>
           </table>

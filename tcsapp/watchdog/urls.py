@@ -4,9 +4,9 @@ from . import views
 
 
 
-views.clear_stores()
-views.clear_invoices()
-views.clear_checks()
+# views.clear_stores()
+# views.clear_invoices()
+# views.clear_checks()
 views.refresh_codes()
 views.testStuff()
 
@@ -17,5 +17,5 @@ urlpatterns = [
      url(r'^info/$', views.info, name='info'),
      url(r'^phone/$', views.yealink, name='phone'),
      url(r'^info/table_info/$', views.table_info, name='ajax_url'),
-     url(r'^info/update/$', views.update, name='update'),
+     url(r'^update/$', views.update, name='update'),
  ]
